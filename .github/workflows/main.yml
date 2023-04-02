@@ -1,0 +1,24 @@
+name: NextJS / AWS CDK CI/CD
+on:
+  push:
+    branches:
+      - master
+      - "feature/**"
+  workflow_dispatch:
+
+jobs:
+  test-only:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install Dependencies
+        run: |
+          cd backend
+          npm install
+      # - name: Run Front-End Tests
+      #   uses: ./.github/actions/run-tests
