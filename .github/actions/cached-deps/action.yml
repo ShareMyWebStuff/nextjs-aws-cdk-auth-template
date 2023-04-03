@@ -23,6 +23,7 @@ runs:
       id: install
       if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
       run: |
+        cd frontend
         npm ci
         echo "::set-output name=cache::'${{ inputs.caching }}'"
       shell: bash
