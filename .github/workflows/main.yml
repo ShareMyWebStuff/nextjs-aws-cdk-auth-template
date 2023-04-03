@@ -83,7 +83,7 @@ jobs:
         id: deploy
         uses: ./.github/actions/deploy-s3-docker
         with:
-          bucket: gha-security-hosting-demo
+          bucket: tester-bucket-ci-cd
           dist-folder: ./dist
           bucket-region: eu-west-2
       - name: Output information
