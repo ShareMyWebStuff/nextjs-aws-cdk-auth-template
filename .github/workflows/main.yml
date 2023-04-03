@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist-files
-          path: frontend/dist
+          path: frontend/build
   deploy:
     permissions:
       id-token: write
@@ -71,7 +71,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist-files
-          path: ./dist
+          path: ./build
       - name: Output contents
         run: ls
       - name: Get AWS permissions
@@ -84,7 +84,7 @@ jobs:
         uses: ./.github/actions/deploy-s3-docker
         with:
           bucket: tester-bucket-ci-cd
-          dist-folder: ./dist
+          dist-folder: ./build
           bucket-region: eu-west-2
       - name: Output information
         run: |
