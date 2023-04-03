@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist-files
-          path: dist
+          path: frontend/dist
   deploy:
     permissions:
       id-token: write
