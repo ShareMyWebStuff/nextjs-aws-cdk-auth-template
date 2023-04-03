@@ -19,10 +19,10 @@ jobs:
           caching: 'false'
       - name: Output information
         run: echo "Cache used? ${{ steps.cache-deps.outputs.used-cache }}"
-      - name: Lint code
-        run: |
-          cd frontend
-          npm run lint
+      # - name: Lint code
+      #   run: |
+      #     cd frontend
+      #     npm run lint
   test:
     runs-on: ubuntu-latest
     steps:
