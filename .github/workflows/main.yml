@@ -7,18 +7,109 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-only:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Get code
         uses: actions/checkout@v3
-      - name: Install Node 18
-        uses: actions/setup-node@v3
+      - name: Load & cache dependencies
+        id: cache-deps
+        uses: ./.github/actions/cached-deps
         with:
-          node-version: 16
-      - name: Install Dependencies
+          caching: 'false'
+      - name: Output information
+        run: echo "Cache used? ${{ steps.cache-deps.outputs.used-cache }}"
+      - name: Lint code
+        run: npm run lint
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Load & cache dependencies
+        uses: ./.github/actions/cached-deps
+      - name: Test code
+        id: run-tests
+        run: npm run test
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Load & cache dependencies
+        uses: ./.github/actions/cached-deps
+      - name: Build website
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Get build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: ./dist
+      - name: Output contents
+        run: ls
+      - name: Get AWS permissions
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::216211142709:role/AWSOpenIdRole
+          aws-region: eu-west-2
+      - name: Deploy site
+        id: deploy
+        uses: ./.github/actions/deploy-s3-docker
+        with:
+          bucket: gha-security-hosting-demo
+          dist-folder: ./dist
+          # bucket-region: eu-west-2
+      - name: Output information
         run: |
-          cd backend
-          npm install
-      # - name: Run Front-End Tests
-      #   uses: ./.github/actions/run-tests
+          echo "Live URL: ${{ steps.deploy.outputs.website-url }}"
+
+
+
+  # test-only:
+  #   # Added to allow the AWS permission iopenid to work
+  #   # read is required so the checkout action runs
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     - name: Install Node 18
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16
+  #     - name: Install Dependencies
+  #       run: |
+  #         cd frontend
+  #         npm install
+  #     - name: Get AWS Permissions
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       # Role from AWS that we created
+  #       role-to-assume: arn:aws:iam::216211142709:role/AWSOpenIdRole
+  #       aws-region: eu-west-2
+
+
+  #     # - name: Run Front-End Tests
+  #     #   uses: ./.github/actions/run-tests
