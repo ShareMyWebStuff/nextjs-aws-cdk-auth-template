@@ -31,7 +31,7 @@ jobs:
       - name: Synth Stack
         run: cd backend && yarn cdk synth
       - name: Deploy Stack
-        run: cd backend && yarn cdk deploy -all --require-approval never
+        run: cd backend && yarn cdk deploy --all --require-approval never
       # - name: CDK synth
       #   run: npx cdk synth --app "npx ts-node src/main.ts" --output "cdk.out"
       # - name: CDK deploy
