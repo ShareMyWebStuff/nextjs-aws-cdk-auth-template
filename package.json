@@ -1,0 +1,27 @@
+{
+  "name": "auth-demo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "This project creates a polyrepo with a frontend writen in NextJS and a Backend connected via routes on AWS ApiGateway. The project is maintained using Github actions to manage the deployment.",
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "prettier": "^2.8.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShareMyWebStuff/nextjs-aws-cdk-auth-template.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShareMyWebStuff/nextjs-aws-cdk-auth-template/issues"
+  },
+  "homepage": "https://github.com/ShareMyWebStuff/nextjs-aws-cdk-auth-template#readme",
+  "workspaces": [
+    "backend/*",
+    "frontend/*"
+  ]
+}
