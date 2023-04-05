@@ -21,6 +21,21 @@ jobs:
           echo ${{ github.event.pull_request.head.repo.full_name }}
       - name: Get code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Install Dependencies
+        run: |
+          cd backend
+          yarn install --frozen-lockfile
+      - name: Synth Stack
+        run: cd backend && yarn cdk synth
+      - name: Deploy Stack
+        run: cd backend && yarn cdk deploy -all --require-approval never
+      # - name: CDK synth
+      #   run: npx cdk synth --app "npx ts-node src/main.ts" --output "cdk.out"
+      # - name: CDK deploy
+      #   run: npx cdk deploy --all --app "cdk.out" --require-approval never
 
 # name: NextJS / AWS CDK CI/CD
 # on:
